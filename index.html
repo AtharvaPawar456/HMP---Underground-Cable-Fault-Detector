@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Underground Cable Fault Detection</title>
+
+    <style>
+        /* Custom CSS for the marker */
+        .marker {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            background-color: red;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1; /* Ensure it stays on top of the map */
+        }
+
+        .map-container {
+            position: relative;
+        }
+    </style>
+
+    <script>
+        // Function to fetch data from ThingSpeak API and render it
+        async function fetchDataAndRender() {
+            try {
+                // Fetch data from the ThingSpeak API
+                const response = await fetch('https://api.thingspeak.com/channels/2035354/feeds.json?results=2');
+                const data = await response.json();
+                
+                // Get the last entry (latest values)
+                const latestFeed = data.feeds[data.feeds.length - 1];
+                const lineNo = latestFeed.field1;
+                const distance = latestFeed.field2;
+                const latitude = latestFeed.field4;
+                const longitude = latestFeed.field3;
+
+                // Update the HTML elements with the fetched data
+                document.getElementById('lineNo').innerText = `Line No.: ${lineNo}`;
+                document.getElementById('distance').innerText = `Distance: ${distance} km`;
+                document.getElementById('latitude').innerText = `Lat: ${latitude}`;
+                document.getElementById('longitude').innerText = `Long: ${longitude}`;
+
+                // Update the Google Maps iframe with new latitude and longitude
+                const mapSrc = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3770.833015812494!2d${longitude}!3d${latitude}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2z${latitude}!5e0!3m2!1sen!2sus!4v1631465511513!5m2!1sen!2sus`;
+                document.getElementById('mapFrame').src = mapSrc;
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        // Call the function when the page loads
+        window.onload = fetchDataAndRender;
+    </script>
+
+</head>
+<body>
+    
+    <!-- Navbar -->
+    <section class="border grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-md md:text-2xl font-bold px-2 shadow-md shadow-indigo-400 py-4 ">
+        <div class="grid grid-cols-8">
+            <img class="h-10 rounded-full border border-2 shadow-md shadow-indigo-400" src="static/cablelogo.png" alt="logo">
+            <div class="col-span-7 text-center">Underground Cable Fault Detection</div>
+        </div>
+        <div></div>
+        <div class="text-center hover:underline">Contact</div>
+    </section>
+
+    <!-- Body -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-4 md:m-6">
+        <div class="grid grid-cols-2 gap-2 m-2 md:m-10 text-sm md:text-xl font-bold font-mono text-center">
+            <div class="border rounded-md shadow-sm shadow-gray-400 p-2 md:py-14" id="lineNo">Line No.: </div>
+            <div class="border rounded-md shadow-sm shadow-gray-400 p-2 md:py-14" id="distance">Distance: </div>
+            <div class="border rounded-md shadow-sm shadow-gray-400 p-2 md:py-14" id="latitude">Lat: </div>
+            <div class="border rounded-md shadow-sm shadow-gray-400 p-2 md:py-14" id="longitude">Long: </div>
+        </div>
+        <div class="border rounded-md shadow-sm shadow-gray-400 map-container">
+            <!-- Marker -->
+            <div class="marker"></div>
+            
+            <!-- Embedded Google Map -->
+            <iframe 
+                id="mapFrame"
+                width="100%" 
+                height="450" 
+                style="border:0;" 
+                allowfullscreen="" 
+                loading="lazy">
+            </iframe>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <section class="text-2xl font-mono font-bold text-center pb-10">
+        <div class="p-2 bg-indigo-100 mb-4">Project : Underground Cable Fault Detection</div>
+        <div>College : </div>
+
+        <div>Team:</div>
+        <div>Member 1 : (123)</div>
+        <div>Member 1 : (123)</div>
+        <div>Member 1 : (123)</div>
+
+    </section>
+    <div class="text-sm md:text-2xl text-gray-400 text-center py-2 font-bold font-mono">Underground Cable Fault Detection @ 2024</div>
+
+</body>
+</html>
